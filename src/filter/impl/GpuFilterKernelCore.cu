@@ -762,7 +762,6 @@ __device__ int ExecuteIntExpression(FilterEvalParameters & _rParameters)
 			if(mExecutorNode.m_ConstValue.e_Type == DataType::Int)
 			{
 				_rParameters.i_CurrentIndex++;
-				printf("CONST %d \n",mExecutorNode.m_ConstValue.m_Value.i_IntVal);
 				return mExecutorNode.m_ConstValue.m_Value.i_IntVal;
 			}
 		}
@@ -775,13 +774,6 @@ __device__ int ExecuteIntExpression(FilterEvalParameters & _rParameters)
 				int32_t i;
 				memcpy(&i, _rParameters.p_Event + _rParameters.p_Meta->p_Attributes[mExecutorNode.m_VarValue.i_AttributePosition].i_Position, 4);
 				_rParameters.i_CurrentIndex++;
-				void* malloc0 = malloc(sizeof(int32_t));
-				int32_t *test = (int32_t *)malloc0;
-//				*test = i;
-				test = &i;
-				printf("VALUE N %d\n", _rParameters.p_Event + (_rParameters.p_Meta->p_Attributes[mExecutorNode.m_VarValue.i_AttributePosition].i_Position));
-				printf("VALUE i %d\n", i);
-				printf("VALUE test %d\n", *test);
 				return i;
 			}
 		}

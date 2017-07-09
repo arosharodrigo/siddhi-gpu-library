@@ -60,9 +60,6 @@ ProcessEventsFilterKernelStandalone(
 	mEvalParameters.i_CurrentIndex = 0;
 
 	bool bResult = Evaluate(mEvalParameters);
-	printf(">>>>>>>>>> bResult - %d\n", bResult);
-	printf(">>>>>>>>>> iEventIdx - %d\n", iEventIdx);
-	printf(">>>>>>>>>> Event - %d\n", mEvalParameters.p_Event);
 
 	if(bResult)
 	{
@@ -168,13 +165,12 @@ GpuFilterKernelStandalone::GpuFilterKernelStandalone(GpuProcessor * _pProc, GpuP
 GpuFilterKernelStandalone::~GpuFilterKernelStandalone()
 {
 	fprintf(fp_Log, "[GpuFilterKernelStandalone] destroy\n");
-	fprintf(fp_Log, "[GpuFilterKernelStandalone] %d", p_DeviceFilter);
 	fflush(fp_Log);
 
-//	CUDA_CHECK_RETURN(cudaFree(p_DeviceFilter));
+	CUDA_CHECK_RETURN(cudaFree(p_DeviceFilter));
 	p_DeviceFilter = NULL;
 
-//	CUDA_CHECK_RETURN(cudaFree(p_DeviceParameters));
+	CUDA_CHECK_RETURN(cudaFree(p_DeviceParameters));
 	p_DeviceParameters = NULL;
 
 	if(p_DeviceOutputAttributeMapping)
@@ -212,7 +208,8 @@ bool GpuFilterKernelStandalone::Initialize(int _iStreamIndex, GpuMetaEvent * _pM
 			p_ResultEventBuffer->GetEventBufferSizeInBytes());
 	fflush(fp_Log);
 	p_ResultEventBuffer->Print();
-    delete pFilterResultMetaEvent;
+
+	delete pFilterResultMetaEvent;
 
 
 	fprintf(fp_Log, "[GpuFilterKernelStandalone] Copying filter to device \n");
@@ -276,7 +273,6 @@ bool GpuFilterKernelStandalone::Initialize(int _iStreamIndex, GpuMetaEvent * _pM
 	// copy Output mappings
 	if(p_HostOutputAttributeMapping)
 	{
-		printf("ATTRIBUTE MAPPING \n");
 		fprintf(fp_Log, "[GpuFilterKernelStandalone] Copying AttributeMappings to device \n");
 		fflush(fp_Log);
 
@@ -369,9 +365,7 @@ void GpuFilterKernelStandalone::Process(int _iStreamIndex, int & _iNumEvents)
 
 	if(b_LastKernel)
 	{
-		p_ResultEventBuffer->CopyToHost(false);
-		fprintf(fp_Log, "[GpuFilterKernelStandalone] p_ResultEventBuffer %d\n", p_ResultEventBuffer->GetHostEventBuffer()[0]);
-		fflush(fp_Log);
+		p_ResultEventBuffer->CopyToHost(true);
 	}
 
 	CUDA_CHECK_RETURN(cudaPeekAtLastError());
