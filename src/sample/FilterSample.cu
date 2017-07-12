@@ -11,7 +11,9 @@
 
 using namespace SiddhiGpu;
 
-int main() {
+int main2() {
+
+	printf("Starting Filter Sample ...\n");
 
 	SiddhiGpu::GpuMetaEvent gpuMetaEvent (0, 1, 4);
 //	gpuMetaEvent.SetAttribute(0,5,8,0);
@@ -48,6 +50,10 @@ int main() {
 	gpuFilterProcessor.AddExecutorNode(1, node2);
 	gpuFilterProcessor.AddExecutorNode(2, node3);
 
+	AttributeMappings attributeMappings (1);
+	attributeMappings.AddMapping(0, 0, 0, 0);
+	gpuFilterProcessor.SetOutputStream(&gpuMetaEvent, &attributeMappings);
+
 	SiddhiGpu::GpuQueryRuntime gpuQueryRuntime ("filterQuery1", 0, 1);
 	gpuQueryRuntime.AddStream("filterStream1", &gpuMetaEvent);
 	gpuQueryRuntime.AddProcessor("filterStream1", &gpuFilterProcessor);
@@ -65,12 +71,10 @@ int main() {
 	char* resultEventBuffer = gpuFilterProcessor.GetResultEventBuffer();
 	int resultEventBufferSize = gpuFilterProcessor.GetResultEventBufferSize();
 
-	printf("outputSize: %d\n", outputSize);
-	printf("resultEventBuffer[0]: %d\n", resultEventBuffer[0]);
-	printf("resultEventBuffer[1]: %d\n", resultEventBuffer[1]);
-	printf("resultEventBuffer[2]: %d\n", resultEventBuffer[2]);
-	printf("resultEventBuffer[3]: %d\n", resultEventBuffer[3]);
-	printf("resultEventBuffer[4]: %d\n", resultEventBuffer[4]);
+	printf("Output Event Size: %d\n", outputSize);
+	for(int i = 0; i < resultEventBufferSize ; i++) {
+		printf("resultEventBuffer[%d]: %d\n", i, resultEventBuffer[i]);
+	}
 	printf("resultEventBufferSize: %d\n", resultEventBufferSize);
 
 	return 0;
